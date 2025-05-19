@@ -23,13 +23,11 @@ final class DefaultNetworkClient: NetworkClient {
             throw NetworkError.badURL
         }
 
-        guard let token = readGitHubTokenFromKeychain() else {
-            throw NetworkError.unathorized
-        }
-
         var request = URLRequest(url: url)
         request.httpMethod = "GET"
-        request.setValue("token \(token)", forHTTPHeaderField: "Authorization")
+        if let token = readGitHubTokenFromKeychain() {
+           request.setValue("token \(token)", forHTTPHeaderField: "Authorization")
+        }
         request.setValue("application/vnd.github+json", forHTTPHeaderField: "Accept")
         request.httpBody = endpoint.body
 
